@@ -30,6 +30,7 @@ This is a simple CRUD (Create, Read, Update, Delete) application built with [Lar
 
 1. **Clone the Repository**
     ```bash
-    git clone https://github.com/your-username/laravel-react-crud.git
-    cd laravel-react-crud
+    git clone https://github.com/simanto848/laravel-crud
+    cd laravel-crud
+    php artisan serve # run using this command
     ```
