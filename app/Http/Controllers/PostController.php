@@ -13,7 +13,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        $posts = Post::where('user_id', auth()->id())->get();
+        return view('posts.index', compact('posts'));
     }
 
     /**
@@ -21,7 +22,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
@@ -29,7 +30,12 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        //
+        $validated = $request->validated();
+        $validated['user_id'] = auth()->id();
+        
+        Post::create($validated);
+
+        return redirect()->route('posts.index')->with('success', 'Post created successfully');
     }
 
     /**
@@ -45,7 +51,8 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        $this->authorizePost($post);
+        return view('posts.edit', compact('post'));
     }
 
     /**
@@ -53,7 +60,12 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
-        //
+        $this->authorizePost($post);
+        $validated = $request->validated();
+
+        $post->update($validated);
+
+        return redirect()->route('posts.index')->with('success', 'Post updated successfully');
     }
 
     /**
@@ -61,6 +73,15 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $this->authorizePost($post);
+        $post->delete();
+
+        return redirect()->route('posts.index')->with('success', 'Post deleted successfully');
+    }
+
+    private function authorizePost(Post $post) {
+        if($post->user_id !== auth()->id()){
+            abort(403, 'You are not authorized to perforn this action');
+        }
     }
 }
